@@ -13,6 +13,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProfileController;
+
+Route::get('/', [PageController::class, 'handleAction']);
+
+Route::group(['prefix' => 'auth'], function () {
+    Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
+    Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/auth/logout', [AuthController::class, 'logout'])->name('auth.logout');
+    Route::post('/profile/{user}', [ProfileController::class, 'edit'])->name('profile.edit');
 });
